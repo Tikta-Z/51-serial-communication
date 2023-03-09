@@ -1,0 +1,156 @@
+A51 MACRO ASSEMBLER  APPLE                                                                12/12/2021 20:23:53 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02c
+OBJECT MODULE PLACED IN .\Objects\apple.obj
+ASSEMBLER INVOKED BY: D:\Lc University\software\keil\C51\BIN\A51.EXE ..\..\apple.asm SET(SMALL) DEBUG PRINT(.\Listings\a
+                      pple.lst) OBJECT(.\Objects\apple.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+  00A4                 1     LED      BIT    P2.4
+0000                   2     ORG 0000H
+0000 800B              3     JMP START1
+000B                   4     ORG 000BH
+000B 804C              5     JMP TIM0
+                       6     
+000D 758911            7     START1: MOV TMOD,#11H
+0010 D2AF              8                     SETB EA
+                       9                     
+0012 B2A4             10                     CPL      LED
+0014 120079           11                     LCALL DELAY1
+0017 B2A4             12                     CPL      LED
+0019 12001F           13                     LCALL START
+001C 0200B6           14                     LJMP END1
+                      15                                                             
+001F D2A9             16     START:  SETB ET0
+                      17                                     
+0021 753000           18     START0: MOV 30H,#00
+0024 E530             19     NEXT:   MOV A,30H
+0026 9000A4           20                     MOV DPTR,#TABLE
+0029 93               21                     MOVC A,@A+DPTR          ;È¡³öÒô·û
+002A FA               22                     MOV R2,A
+002B 6029             23                     JZ END0                         ;AÎª00Ôò¸èÇú½áÊø
+002D 540F             24                     ANL A,#0FH
+002F FD               25                     MOV R5,A                        ;È¡³ö½ÚÅÄ·ÅÔÚR5
+0030 EA               26                     MOV A,R2
+0031 C4               27                     SWAP A
+0032 540F             28                     ANL A,#0FH                      ;È¡³öÒôµ÷·ÅÔÚA
+0034 7002             29                     JNZ SING                        ;A²»Îª0Ìø×ª
+0036 801E             30                     JMP END0
+0038 14               31     SING:   DEC A
+0039 F522             32                     MOV 22H,A
+003B 23               33                     RL A
+003C 900086           34                     MOV DPTR,#TABLE1
+003F 93               35                     MOVC A,@A+DPTR          ;È¡³ö¸ßÎ»µÄ³õÖµ
+0040 F58C             36                     MOV TH0,A                       
+0042 F521             37                     MOV 21H,A
+0044 E522             38                     MOV A,22H
+0046 23               39                     RL A
+0047 04               40                     INC A
+0048 93               41                     MOVC A,@A+DPTR          ;È¡³öµÍÎ»µÄ³õÖµ
+0049 F58A             42                     MOV TL0,A
+004B F520             43                     MOV 20H,A
+004D D28C             44                     SETB TR0
+004F 12006A           45     D1:             LCALL DELAY             ;Êä³öÒ»¸öÒô·û
+0052 0530             46                     INC 30H
+0054 80CE             47                     JMP NEXT
+0056 C28C             48     END0:   CLR TR0                 ;Í£Ö¹²¥·Å
+0058 22               49                     RET
+0059 C0E0             50     TIM0:   PUSH ACC
+005B C0D0             51                     PUSH PSW
+005D 85208A           52                     MOV TL0,20H             ;ÖØÐÂ×°Èë³õÖµ
+0060 85218C           53                     MOV TH0,21H
+0063 B2A7             54                     CPL P2.7        ;Êä³öÒôÆµÊ¾Ý
+0065 D0D0             55                     POP PSW
+0067 D0E0             56                     POP ACC
+0069 32               57                     RETI
+A51 MACRO ASSEMBLER  APPLE                                                                12/12/2021 20:23:53 PAGE     2
+
+006A 7F02             58       DELAY:MOV R7,#02              ;ÑÓÊ±0.13s¡ÁR5
+006C 7C64             59         D2: MOV R4,#100
+006E 7BF8             60         D3: MOV R3,#248
+0070 DBFE             61                     DJNZ R3,$
+0072 DCFA             62                     DJNZ R4,D3
+0074 DFF6             63                     DJNZ R7,D2
+0076 DDF2             64                     DJNZ R5,DELAY
+0078 22               65                     RET
+                      66                     
+0079 7F32             67     DELAY1: MOV R7,#50              ;ÑÓÊ±3S
+007B 7C64             68     D21:            MOV R4,#100
+007D 7BFA             69     D31:            MOV R3,#250
+007F DBFE             70                     DJNZ R3,$
+0081 DCFA             71                     DJNZ R4,D31
+0083 DFF6             72                     DJNZ R7,D21
+0085 22               73                     RET
+                      74     
+0086                  75     TABLE1:
+0086 F889             76                     DW 63625,63833,64019,64104,64260,64440,64524                    ;ÒôÂÉ±í
+0088 F959                    
+008A FA13                    
+008C FA68                    
+008E FB04                    
+0090 FBB8                    
+0092 FC0C                    
+0094 FC44             77                     DW 64580,64685,64778,64820,64898,64968,65030
+0096 FCAD                    
+0098 FD0A                    
+009A FD34                    
+009C FD82                    
+009E FDC8                    
+00A0 FE06                    
+00A2 FE22             78                     DW 65058
+                      79                     ;       1         2              3    4      5     6     7   µÍÒô
+                      80                     ;   8     9          A    B      C         D     E  ÖÐÒô
+                      81                     ;   F                                                                      
+                                   ¸ßÒô
+00A4 A4849464         82     TABLE:  DB      0A4H,84H,94H,64H,0A2H,92H,83H,92H,64H   ;¸ßÎ»ÎªÒôÂÉ£¬µÍÎ»Îª½ÚÅÄÊ±¼ä
+00A8 A2928392                
+00AC 64                      
+00AD A4849494         83                     DB      0A4H,84H,94H,94H,0C2H,0A2H,72H,84H      
+00B1 C2A27284                
+00B5 00               84                     DB  00H         
+                      85     
+00B6                  86     END1:
+                      87     END
+A51 MACRO ASSEMBLER  APPLE                                                                12/12/2021 20:23:53 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ACC. . . . . . . .  D ADDR   00E0H   A   
+D1 . . . . . . . .  C ADDR   004FH   A   
+D2 . . . . . . . .  C ADDR   006CH   A   
+D21. . . . . . . .  C ADDR   007BH   A   
+D3 . . . . . . . .  C ADDR   006EH   A   
+D31. . . . . . . .  C ADDR   007DH   A   
+DELAY. . . . . . .  C ADDR   006AH   A   
+DELAY1 . . . . . .  C ADDR   0079H   A   
+EA . . . . . . . .  B ADDR   00A8H.7 A   
+END0 . . . . . . .  C ADDR   0056H   A   
+END1 . . . . . . .  C ADDR   00B6H   A   
+ET0. . . . . . . .  B ADDR   00A8H.1 A   
+LED. . . . . . . .  B ADDR   00A0H.4 A   
+NEXT . . . . . . .  C ADDR   0024H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+PSW. . . . . . . .  D ADDR   00D0H   A   
+SING . . . . . . .  C ADDR   0038H   A   
+START. . . . . . .  C ADDR   001FH   A   
+START0 . . . . . .  C ADDR   0021H   A   
+START1 . . . . . .  C ADDR   000DH   A   
+TABLE. . . . . . .  C ADDR   00A4H   A   
+TABLE1 . . . . . .  C ADDR   0086H   A   
+TH0. . . . . . . .  D ADDR   008CH   A   
+TIM0 . . . . . . .  C ADDR   0059H   A   
+TL0. . . . . . . .  D ADDR   008AH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

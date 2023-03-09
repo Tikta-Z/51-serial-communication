@@ -1,0 +1,115 @@
+A51 MACRO ASSEMBLER  INT                                                                  12/10/2021 14:25:27 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02c
+OBJECT MODULE PLACED IN .\Objects\int.obj
+ASSEMBLER INVOKED BY: D:\Lc University\software\keil\C51\BIN\A51.EXE int.asm SET(SMALL) DEBUG PRINT(.\Listings\int.lst) 
+                      OBJECT(.\Objects\int.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;**************???*************************
+  00A4                 2                     LED      BIT    P2.4
+  00A7                 3                     BUZZER   BIT    P2.7
+  0030                 4                     CLOCK    DATA   30H
+0000                   5                    ORG      0000H                   
+0000 020100            6                     LJMP         MAIN       ;??????
+                       7     ;**************??????*************************
+000B                   8                         ORG    000BH
+000B 020136            9                      LJMP       T0_INT      ;???T0??????
+0013                  10                            ORG    0013H
+0013 02010F           11                      LJMP       INT1_INT    ;?????????
+001B                  12                    ORG    001BH
+001B 020139           13                      LJMP       T1_INT      ;???T1??????
+0100                  14                            ORG     0100H
+                      15     ;**************???*************************
+0100 D28A             16     MAIN:       SETB        IT1             ;??????????
+0102 D2AA             17                             SETB    EX1             ;????
+0104 D2BA             18                             SETB    PX1             ;?????
+0106 D2AF             19                             SETB    EA              ;????
+0108 D2D5             20                             SETB    F0              ;??????,F0=1,LED?.F0=0,LED?;
+010A 758912           21                             MOV    TMOD,#12H
+010D 80FE             22                             SJMP   $             ;????
+                      23     ;**************??????*************************
+010F B2D5             24      INT1_INT:      CPL     F0              ;??????
+0111 30D50D           25                             JNB     F0,OPEN_T     ;F0=0,??T0?T1??
+0114 C28C             26                             CLR     TR0             ;??T0??
+0116 C2A9             27                             CLR     ET0             ;??T0??
+0118 C28E             28                             CLR     TR1             ;??T1??
+011A C2AB             29                             CLR     ET1             ;??T1??
+011C D2A4             30                             SETB    LED
+011E D2A7             31                             SETB   BUZZER
+0120 32               32                             RETI                   ;????
+0121 758C06           33     OPEN_T: MOV     TH0,#06H   ;??????
+0124 758A06           34                 MOV         TL0,#06H     
+0127 758D3C           35                             MOV     TH1,#3CH   
+012A 758BB0           36                 MOV         TL1,#0B0H     
+012D D28C             37                             SETB    TR0             ;??T0??
+012F D2A9             38                             SETB    ET0             ;??T0??
+0131 D28E             39                             SETB    TR1             ;??T1??
+0133 D2AB             40                             SETB    ET1             ;??T1??
+0135 32               41                             RETI
+                      42     ;**************T0??????**********************
+0136 B2A7             43       T0_INT:       CPL     BUZZER  ;??????????
+0138 32               44                             RETI
+                      45     ;**************T1??????************************
+0139 C0E0             46          T1_INT:PUSH         ACC              ;????
+013B C0D0             47                              PUSH    PSW
+013D C28E             48                            CLR       TR1                     
+013F 758D3C           49                  MOV   TH1,#3CH    ;????????
+0142 758BB0           50                  MOV   TL1,#0B0H  
+0145 D28E             51                              SETB    TR1
+0147 0530             52                              INC     CLOCK        ;????1
+0149 E530             53                              MOV     A,CLOCK
+014B B40500           54                              CJNE    A,#5, TMPL
+014E 4005             55            TMPL:JC   RETURN   ;??0.5s??
+0150 B2A4             56                              CPL     LED              ;?0.5s????
+0152 753000           57                              MOV     CLOCK,#0         ;?????
+A51 MACRO ASSEMBLER  INT                                                                  12/10/2021 14:25:27 PAGE     2
+
+0155 D0D0             58          RETURN:POP  PSW
+0157 D0E0             59                              POP     ACC 
+0159 32               60                              RETI
+                      61                              END
+                             
+A51 MACRO ASSEMBLER  INT                                                                  12/10/2021 14:25:27 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ACC. . . . . . . .  D ADDR   00E0H   A   
+BUZZER . . . . . .  B ADDR   00A0H.7 A   
+CLOCK. . . . . . .  D ADDR   0030H   A   
+EA . . . . . . . .  B ADDR   00A8H.7 A   
+ET0. . . . . . . .  B ADDR   00A8H.1 A   
+ET1. . . . . . . .  B ADDR   00A8H.3 A   
+EX1. . . . . . . .  B ADDR   00A8H.2 A   
+F0 . . . . . . . .  B ADDR   00D0H.5 A   
+INT1_INT . . . . .  C ADDR   010FH   A   
+IT1. . . . . . . .  B ADDR   0088H.2 A   
+LED. . . . . . . .  B ADDR   00A0H.4 A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+OPEN_T . . . . . .  C ADDR   0121H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+PSW. . . . . . . .  D ADDR   00D0H   A   
+PX1. . . . . . . .  B ADDR   00B8H.2 A   
+RETURN . . . . . .  C ADDR   0155H   A   
+T0_INT . . . . . .  C ADDR   0136H   A   
+T1_INT . . . . . .  C ADDR   0139H   A   
+TH0. . . . . . . .  D ADDR   008CH   A   
+TH1. . . . . . . .  D ADDR   008DH   A   
+TL0. . . . . . . .  D ADDR   008AH   A   
+TL1. . . . . . . .  D ADDR   008BH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TMPL . . . . . . .  C ADDR   014EH   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+TR1. . . . . . . .  B ADDR   0088H.6 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

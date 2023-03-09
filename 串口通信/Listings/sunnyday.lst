@@ -1,0 +1,136 @@
+A51 MACRO ASSEMBLER  SUNNYDAY                                                             12/02/2021 16:28:18 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02c
+OBJECT MODULE PLACED IN .\Objects\sunnyday.obj
+ASSEMBLER INVOKED BY: D:\Lc University\software\keil\C51\BIN\A51.EXE sunnyday.asm SET(SMALL) DEBUG PRINT(.\Listings\sunn
+                      yday.lst) OBJECT(.\Objects\sunnyday.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1     ORG 0000H
+0000 804D              2     JMP START
+000B                   3     ORG 000BH
+000B 0190              4     JMP TIM0
+000D                   5     TABLE1:
+000D F889              6                     DW 63625,63833,64019,64104,64260,64440,64524                    ;ÒôÂÉ±í
+000F F959                    
+0011 FA13                    
+0013 FA68                    
+0015 FB04                    
+0017 FBB8                    
+0019 FC0C                    
+001B FC44              7                     DW 64580,64685,64778,64820,64898,64968,65030
+001D FCAD                    
+001F FD0A                    
+0021 FD34                    
+0023 FD82                    
+0025 FDC8                    
+0027 FE06                    
+0029 FE22              8                     DW 65058
+                       9                     ;       1         2              3    4      5     6     7   µÍÒô
+                      10                     ;   8     9          A    B      C         D     E  ÖÐÒô
+                      11                     ;   F                                                                      
+                                   ¸ßÒô
+002B 6484C484         12     TABLE:  DB      64H,84H,0C4H,84H,44H,52H,62H,0C4H,84H   ;¸ßÎ»ÎªÒôÂÉ£¬µÍÎ»Îª½ÚÅÄÊ±¼ä
+002F 445262C4                
+0033 84                      
+0034 1454C484         13                     DB      14H,54H,0C4H,84H,14H,0C4H,14H,0C4H
+0038 14C414C4                
+003C 6484C464         14                     DB      64H,84H,0C4H,64H,44H,52H,62H,0C4H,84H
+0040 445262C4                
+0044 84                      
+0045 1454C484         15                     DB  14H,54H,0C4H,84H,14H,0C4H,72H,82H,54H       
+0049 14C47282                
+004D 54                      
+004E 00               16                     DB  00H                                                                 
+004F                  17     START:
+004F 758901           18                     MOV TMOD,#01H           ;T0¹¤×÷·½Ê½1
+0052 75A882           19                     MOV IE,#82H                     
+0055 753000           20     START0: MOV 30H,#00
+0058 E530             21     NEXT:   MOV A,30H
+005A 90002B           22                     MOV DPTR,#TABLE
+005D 93               23                     MOVC A,@A+DPTR
+005E FA               24                     MOV R2,A
+005F 602B             25                     JZ END0
+0061 540F             26                     ANL A,#0FH
+0063 FD               27                     MOV R5,A
+0064 EA               28                     MOV A,R2
+0065 C4               29                     SWAP A
+0066 540F             30                     ANL A,#0FH
+0068 7004             31                     JNZ SING
+006A C28C             32                     CLR TR0
+006C 8017             33                     JMP D1
+006E 14               34     SING:   DEC A
+006F F522             35                     MOV 22H,A
+0071 23               36                     RL A
+0072 90000D           37                     MOV DPTR,#TABLE1
+A51 MACRO ASSEMBLER  SUNNYDAY                                                             12/02/2021 16:28:18 PAGE     2
+
+0075 93               38                     MOVC A,@A+DPTR
+0076 F58C             39                     MOV TH0,A
+0078 F521             40                     MOV 21H,A
+007A E522             41                     MOV A,22H
+007C 23               42                     RL A
+007D 04               43                     INC A
+007E 93               44                     MOVC A,@A+DPTR
+007F F58A             45                     MOV TL0,A
+0081 F520             46                     MOV 20H,A
+0083 D28C             47                     SETB TR0
+0085 1200A1           48     D1:             LCALL DELAY             ;Êä³öÒ»¸öÒô·û
+0088 0530             49                     INC 30H
+008A 80CC             50                     JMP NEXT
+008C C28C             51     END0:   CLR TR0                 ;Í£Ö¹²¥·Å
+008E 80C5             52                     JMP START0
+0090 C0E0             53     TIM0:   PUSH ACC
+0092 C0D0             54                     PUSH PSW
+0094 85208A           55                     MOV TL0,20H             ;ÖØÐÂ×°Èë³õÖµ
+0097 85218C           56                     MOV TH0,21H
+009A B2A7             57                     CPL P2.7        ;Êä³öÒôÆµÊ¾Ý
+009C D0D0             58                     POP PSW
+009E D0E0             59                     POP ACC
+00A0 32               60                     RETI
+00A1 7F02             61       DELAY:MOV R7,#02              ;ÑÓÊ±0.13s¡ÁR5
+00A3 7C64             62         D2: MOV R4,#100
+00A5 7BF8             63         D3: MOV R3,#248
+00A7 DBFE             64                     DJNZ R3,$
+00A9 DCFA             65                     DJNZ R4,D3
+00AB DFF6             66                     DJNZ R7,D2
+00AD DDF2             67                     DJNZ R5,DELAY
+00AF 22               68                     RET
+                      69     
+                      70     END
+A51 MACRO ASSEMBLER  SUNNYDAY                                                             12/02/2021 16:28:18 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ACC. . . . . . . .  D ADDR   00E0H   A   
+D1 . . . . . . . .  C ADDR   0085H   A   
+D2 . . . . . . . .  C ADDR   00A3H   A   
+D3 . . . . . . . .  C ADDR   00A5H   A   
+DELAY. . . . . . .  C ADDR   00A1H   A   
+END0 . . . . . . .  C ADDR   008CH   A   
+IE . . . . . . . .  D ADDR   00A8H   A   
+NEXT . . . . . . .  C ADDR   0058H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+PSW. . . . . . . .  D ADDR   00D0H   A   
+SING . . . . . . .  C ADDR   006EH   A   
+START. . . . . . .  C ADDR   004FH   A   
+START0 . . . . . .  C ADDR   0055H   A   
+TABLE. . . . . . .  C ADDR   002BH   A   
+TABLE1 . . . . . .  C ADDR   000DH   A   
+TH0. . . . . . . .  D ADDR   008CH   A   
+TIM0 . . . . . . .  C ADDR   0090H   A   
+TL0. . . . . . . .  D ADDR   008AH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

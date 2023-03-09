@@ -1,0 +1,85 @@
+A51 MACRO ASSEMBLER  CHUAN                                                                12/14/2021 21:35:36 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02c
+OBJECT MODULE PLACED IN .\Objects\chuan.obj
+ASSEMBLER INVOKED BY: D:\Lc University\software\keil\C51\BIN\A51.EXE ..\chuan.asm SET(SMALL) DEBUG PRINT(.\Listings\chua
+                      n.lst) OBJECT(.\Objects\chuan.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1     ORG 0000H
+0000 020030            2                     LJMP START      
+0003                   3     ORG 0003H
+0003 020054            4                     LJMP K2
+0013                   5     ORG 0013H
+0013 02004B            6                     LJMP K3
+0023                   7     ORG 0023H
+0023 02005D            8                     LJMP SEND
+0030                   9     ORG 0030H
+0030 759840           10     START:  MOV SCON,#40H   ;设置串行口工作方式1
+0033 D28A             11                     SETB IT1        ;设置外部中断1下降沿触发
+0035 D288             12                     SETB IT0        ;设置外部中断0下降沿触发
+0037 758700           13                     MOV PCON,#00H   ;SMOD为0，波特率不加倍
+003A 758920           14                     MOV TMOD,#20H   ;定时器工作方式2
+003D 758DFD           15                     MOV TH1,#0FDH   ;溢出率初值
+0040 758BFD           16                     MOV TL1,#0FDH   
+0043 D2AF             17                     SETB EA                 ;总允许
+0045 D2AA             18                     SETB EX1                ;外部中断1允许
+0047 D2A8             19                     SETB EX0                ;外部中断0允许
+0049 80FE             20                     SJMP $
+                      21                             
+004B D2AC             22     K3:             SETB ES                 ;串行口允许
+004D D28E             23                     SETB TR1                ;开定时器1
+004F 74F9             24                     MOV A,#0F9H
+0051 F599             25                     MOV SBUF,A
+0053 32               26                     RETI
+                      27                     
+0054 D2AC             28     K2:             SETB ES                 ;串行口允许
+0056 D28E             29                     SETB TR1                ;开定时器1
+0058 74E7             30                     MOV A,#0E7H
+005A F599             31                     MOV SBUF,A
+005C 32               32                     RETI
+                      33     
+005D C299             34     SEND:   CLR TI
+005F F599             35                     MOV SBUF,A
+0061 7004             36                     JNZ RETEN                       ;A为0则关闭发送程序
+0063 C28E             37                     CLR TR1
+0065 C2AC             38                     CLR ES
+0067 32               39     RETEN:  RETI
+                      40                     
+                      41                     
+                      42                     END
+A51 MACRO ASSEMBLER  CHUAN                                                                12/14/2021 21:35:36 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+EA . . . . . . . .  B ADDR   00A8H.7 A   
+ES . . . . . . . .  B ADDR   00A8H.4 A   
+EX0. . . . . . . .  B ADDR   00A8H.0 A   
+EX1. . . . . . . .  B ADDR   00A8H.2 A   
+IT0. . . . . . . .  B ADDR   0088H.0 A   
+IT1. . . . . . . .  B ADDR   0088H.2 A   
+K2 . . . . . . . .  C ADDR   0054H   A   
+K3 . . . . . . . .  C ADDR   004BH   A   
+PCON . . . . . . .  D ADDR   0087H   A   
+RETEN. . . . . . .  C ADDR   0067H   A   
+SBUF . . . . . . .  D ADDR   0099H   A   
+SCON . . . . . . .  D ADDR   0098H   A   
+SEND . . . . . . .  C ADDR   005DH   A   
+START. . . . . . .  C ADDR   0030H   A   
+TH1. . . . . . . .  D ADDR   008DH   A   
+TI . . . . . . . .  B ADDR   0098H.1 A   
+TL1. . . . . . . .  D ADDR   008BH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR1. . . . . . . .  B ADDR   0088H.6 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

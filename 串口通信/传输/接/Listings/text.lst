@@ -1,0 +1,721 @@
+A51 MACRO ASSEMBLER  TEXT                                                                 12/19/2021 14:08:27 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02c
+OBJECT MODULE PLACED IN .\Objects\text.obj
+ASSEMBLER INVOKED BY: D:\Lc University\software\keil\C51\BIN\A51.EXE C:\Users\Á½Î»ºÚ¶ñÊÆÁ¦\Desktop\text.asm SET(SMALL) D
+                      EBUG PRINT(.\Listings\text.lst) OBJECT(.\Objects\text.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;**************************************
+                       2     ;ÎÂ¶È´«¸ÐÆ÷DS18B20»ã±à³ÌÐò
+                       3     ;STC89C51RC
+                       4     ;**************************************
+  00A5                 5     DQ  BIT P2.5                ;DS18B20µÄÊ¾Ý¿ÚÎ»P3.3
+  00B4                 6     K4  BIT P3.4                
+  00B3                 7     K3      BIT P3.3
+  00B2                 8     K2  BIT P3.2
+  00A4                 9     LED BIT P2.4
+  00A7                10     FMQ BIT P2.7
+                      11     
+  0020                12     TPH DATA 20H                ;´æ·ÅÎÂ¶ÈÖµµÄ¸ß×Ö½Ú
+  0021                13     TPL DATA 21H                ;´æ·ÅÎÂ¶ÈÖµµÄµÍ×Ö½Ú
+  0060                14     MENU DATA 60H
+  0061                15     V_HH DATA 61H
+  0062                16     V_HL DATA 62H   
+  0063                17     V_LH DATA 63H
+  0064                18     V_LL DATA 64H   
+                      19     
+                      20     
+0000 758160           21     MOV SP,#60H
+                      22     
+                      23     
+0000                  24             ORG 0000H
+0000 020600           25             LJMP MAIN
+000B                  26             ORG 000BH
+000B 0208E3           27             LJMP T0INT
+001B                  28             ORG 001BH
+001B C151             29         JMP TIM1
+0600                  30             ORG 0600H
+                      31     
+0600                  32     MAIN:
+                      33             ;setb f0
+0600 756000           34             MOV MENU,#0
+0603 756102           35             MOV V_HH,#02H
+0606 756230           36             MOV V_HL,#30H
+0609 756300           37             MOV V_LH,#00H
+060C 7564A0           38             MOV V_LL,#0A0H
+060F                  39     START1:
+060F 758910           40             MOV TMOD,#10H           ;T0¹¤×÷·½Ê½1
+0612 75A888           41             MOV IE,#88H
+0615 753000           42             MOV 30H,#00
+0618 E530             43     NEXT11: MOV A,30H
+061A 900931           44                     MOV DPTR,#TABLE
+061D 93               45                     MOVC A,@A+DPTR
+061E FA               46                     MOV R2,A
+061F 602B             47                     JZ END0
+0621 540F             48                     ANL A,#0FH
+0623 FD               49                     MOV R5,A
+0624 EA               50                     MOV A,R2
+0625 C4               51                     SWAP A
+0626 540F             52                     ANL A,#0FH
+0628 7004             53                     JNZ SING
+062A C28E             54                     CLR TR1
+062C 8017             55                     JMP D11
+062E 14               56     SING:   DEC A
+062F F522             57                     MOV 22H,A
+A51 MACRO ASSEMBLER  TEXT                                                                 12/19/2021 14:08:27 PAGE     2
+
+0631 23               58                     RL A
+0632 900913           59                     MOV DPTR,#TABLE1
+0635 93               60                     MOVC A,@A+DPTR
+0636 F58D             61                     MOV TH1,A
+0638 F521             62                     MOV 21H,A
+063A E522             63                     MOV A,22H
+063C 23               64                     RL A
+063D 04               65                     INC A
+063E 93               66                     MOVC A,@A+DPTR
+063F F58B             67                     MOV TL1,A
+0641 F520             68                     MOV 20H,A
+0643 D28E             69                     SETB TR1
+0645 120664           70     D11:    LCALL DELAY11           ;Êä³öÒ»¸öÒô·û
+0648 0530             71                     INC 30H
+064A 80CC             72                     JMP NEXT11
+064C C28E             73     END0:   CLR TR1 ;Í£Ö¹²¥·Å
+064E E4               74                     clr a 
+064F 8025             75                     JMP loop111
+                      76                     
+0651 C0E0             77     TIM1:   PUSH ACC
+0653 C0D0             78                     PUSH PSW
+0655 85208B           79                     MOV TL1,20H             ;ÖØÐÂ×°Èë³õÖµ
+0658 85218D           80                     MOV TH1,21H
+065B B2A7             81                     CPL fmq         ;Êä³öÒôÆµÊ¾Ý
+065D B2A4             82                     cpl led
+065F D0D0             83                     POP PSW
+0661 D0E0             84                     POP ACC
+0663 32               85                     RETI
+                      86                     
+0664 7F02             87     DELAY11:MOV R7,#02              ;ÑÓÊ±0.13s¡ÁR5
+0666 7C64             88         D22:        MOV R4,#100
+0668 7BF8             89         D33:        MOV R3,#248
+066A DBFE             90                     DJNZ R3,$
+066C DCFA             91                     DJNZ R4,D33
+066E DFF6             92                     DJNZ R7,D22
+0670 DDF2             93                     DJNZ R5,DELAY11
+0672 30B301           94                     jnb k3,loop111
+0675 22               95                     RET
+                      96     
+                      97     
+0676                  98     LOOP111:        
+0676 B40003           99             CJNE A,#0,START
+0679 1206AC          100             LCALL MENU0
+067C                 101     START:
+067C 30B403          102             JNB K4,NEXT
+067F 02068A          103             LJMP NO_NEXT
+0682                 104     NEXT:
+0682 0560            105             INC MENU
+0684 1206A0          106             LCALL SETTLE
+0687 30B4FD          107             JNB K4,$
+068A                 108     NO_NEXT:
+068A E560            109             MOV A,MENU
+068C B40003          110             CJNE A,#0,NEXT0
+068F 02069E          111             LJMP RESTART
+0692                 112     NEXT0:  
+0692 B40103          113             CJNE A,#01H,NEXT1
+0695 1206B6          114             LCALL MENU1
+0698                 115     NEXT1:
+0698 B40203          116             CJNE A,#02H,RESTART
+069B 1206C9          117             LCALL MENU2
+069E                 118     RESTART: 
+069E 80D6            119             SJMP LOOP111
+                     120     
+                     121     
+06A0                 122     SETTLE: 
+06A0 1208EC          123             LCALL DELAY
+A51 MACRO ASSEMBLER  TEXT                                                                 12/19/2021 14:08:27 PAGE     3
+
+06A3 E560            124             MOV A,MENU
+06A5 B40303          125             CJNE A,#03H,NEXT5
+06A8 1206DC          126             LCALL CLR_MENU 
+06AB                 127     NEXT5:  
+06AB 22              128             RET
+                     129     
+06AC                 130     MENU0:
+06AC 1207C3          131             LCALL CAIJI;321
+06AF 120824          132             LCALL DISPLAY
+06B2 12089F          133             LCALL BUZZER
+                     134     
+06B5 22              135     RET
+                     136     
+06B6                 137     MENU1:
+06B6 1206E0          138             LCALL UP_KEYH
+06B9 1206F3          139             LCALL DOWN_KEYH
+06BC 856120          140             MOV TPH,V_HH
+06BF 856221          141             MOV TPL,V_HL
+06C2 1207F5          142             LCALL EN_VHL
+06C5 12084B          143             LCALL DISP_COVERH
+06C8 22              144     RET
+                     145     
+06C9                 146     MENU2:
+06C9 120706          147             LCALL UP_KEYL
+06CC 120719          148             LCALL DOWN_KEYL
+06CF 856320          149             MOV TPH,V_LH
+06D2 856421          150             MOV TPL,V_LL
+06D5 1207F5          151             LCALL EN_VHL
+06D8 120875          152             LCALL DISP_COVERL
+06DB 22              153     RET
+                     154     
+06DC                 155     CLR_MENU:
+06DC 756000          156             MOV MENU,#0
+06DF 22              157     RET
+                     158     
+06E0                 159     UP_KEYH:
+06E0 20B30F          160             JB K3,EXH3
+06E3                 161     UP_KH3:
+06E3 1208F9          162             LCALL DEL0S
+06E6 E562            163             MOV A,V_HL
+06E8 2410            164             ADD A,#10H
+06EA F562            165             MOV V_HL,A
+06EC E561            166             MOV A,V_HH
+06EE 3400            167             ADDC A,#0
+06F0 F561            168             MOV V_HH,A
+06F2                 169     EXH3:
+06F2 22              170             RET
+                     171             
+06F3                 172     DOWN_KEYH:
+06F3 20B20F          173             JB K2,EXH4
+06F6                 174     DOWN_KH4:
+06F6 1208F9          175             LCALL DEL0S
+06F9 E562            176             MOV A,V_HL
+06FB 9410            177             SUBB A,#10H
+06FD F562            178             MOV V_HL,A
+06FF E561            179             MOV A,V_HH
+0701 9400            180             SUBB A,#0
+0703 F561            181             MOV V_HH,A
+0705                 182     EXH4:
+0705 22              183             RET
+                     184             
+0706                 185     UP_KEYL:
+0706 20B30F          186             JB K3,EXL3
+0709                 187     UP_KL3:
+0709 1208F9          188             LCALL DEL0S
+070C E564            189             MOV A,V_LL
+A51 MACRO ASSEMBLER  TEXT                                                                 12/19/2021 14:08:27 PAGE     4
+
+070E 2410            190             ADD A,#10H
+0710 F564            191             MOV V_LL,A
+0712 E563            192             MOV A,V_LH
+0714 3400            193             ADDC A,#0
+0716 F563            194             MOV V_LH,A
+0718                 195     EXL3:
+0718 22              196             RET
+                     197             
+0719                 198     DOWN_KEYL:
+0719 20B20F          199             JB K2,EXL4
+071C                 200     DOWN_KL4:
+071C 1208F9          201             LCALL DEL0S
+071F E564            202             MOV A,V_LL
+0721 9410            203             SUBB A,#10H
+0723 F564            204             MOV V_LL,A
+0725 E563            205             MOV A,V_LH
+0727 9400            206             SUBB A,#0
+0729 F563            207             MOV V_LH,A
+072B                 208     EXL4:
+072B 22              209             RET
+                     210     
+072C                 211     Reset:
+072C F157            212         CALL DS18B20_Reset      ;Éè±¸¸´Î»
+072E 74CC            213         MOV A,#0CCH             ;Ìø¹ROMÃüÁî
+0730 F18E            214         CALL DS18B20_WriteByte  ;ËÍ³öÃüÁî
+0732 7444            215         MOV A,#044H             ;¿ªÊ¼×ª»»
+0734 F18E            216         CALL DS18B20_WriteByte  ;ËÍ³öÃüÁî
+0736 30A5FD          217         JNB DQ,$                ;µÈ´×ª»»Íê³É
+                     218         ;CALL 750MS
+                     219     
+0739 F157            220         CALL DS18B20_Reset      ;Éè±¸¸´Î»
+073B 74CC            221         MOV A,#0CCH             ;Ìø¹ROMÃüÁî
+073D F18E            222         CALL DS18B20_WriteByte  ;ËÍ³öÃüÁî
+073F 74BE            223         MOV A,#0BEH             ;¶ÁÔÝ´æ´æ´¢Æ÷
+0741 F18E            224         CALL DS18B20_WriteByte  ;ËÍ³öÃüÁî
+0743 F173            225         CALL DS18B20_ReadByte   ;¶ÁÎÂ¶ÈµÍ×Ö½Ú
+0745 F521            226         MOV TPL,A               ;´æ´¢Ê¾Ý
+0747 F173            227         CALL DS18B20_ReadByte   ;¶ÁÎÂ¶È¸ß×Ö½Ú
+0749 F520            228         MOV TPH,A               ;´æ´¢Ê¾Ý
+                     229     
+074B 22              230         RET
+                     231     
+                     232     ;**************************************
+                     233     ;ÑÓÊ±X*10Î¢Ãë(STC90C52RC@12M)
+                     234     ;²»Í¬µÄ¹¤×÷»·¾³,ÐèÒªµ÷Õû´Ëº¯Ê
+                     235     ;Èë¿Ú²ÎÊ:R7
+                     236     ;³ö¿Ú²ÎÊ:ÎÞ
+                     237     ;**************************************
+074C                 238     DelayX0us:                  ;2 µ±¸ÄÓÃ1TµÄMCUÊ±,Çëµ÷Õû´ËÑÓÊ±º¯Ê
+074C 00              239         NOP                     ;1
+074D 00              240         NOP                     ;1
+074E 00              241         NOP                     ;1
+074F 00              242         NOP                     ;1
+0750 00              243         NOP                     ;1
+0751 00              244         NOP                     ;1
+0752 00              245         NOP                     ;1
+0753 00              246         NOP                     ;1
+0754 DFF6            247         DJNZ R7,DelayX0us       ;2
+0756 22              248         RET                     ;2
+                     249     
+                     250     ;**************************************
+                     251     ;¸´Î»DS18B20,²¢¼ì²âÉè±¸ÊÇ·ñ´æÔÚ
+                     252     ;Èë¿Ú²ÎÊ:ÎÞ
+                     253     ;³ö¿Ú²ÎÊ:ÎÞ
+                     254     ;**************************************
+0757                 255     DS18B20_Reset:
+A51 MACRO ASSEMBLER  TEXT                                                                 12/19/2021 14:08:27 PAGE     5
+
+0757 C2AF            256             CLR EA                  ;Ê¹ÓÃ18B20Ê±Ðè½ûÖ¹ÖÐ¶Ï
+0759 C2A5            257         CLR DQ                  ;ËÍ³öµÍµçÆ½¸´Î»ÐÅºÅ
+075B 7F30            258         MOV R7,#48              ;ÑÓÊ±ÖÁÉÙ480us
+075D F14C            259         CALL DelayX0us
+075F D2A5            260         SETB DQ                 ;ÊÍ·ÅÊ¾ÝÏß
+0761 7F06            261         MOV R7,#6               ;µÈ´60us
+0763 F14C            262         CALL DelayX0us
+0765 A2A5            263         MOV C,DQ                ;¼ì²â´æÔÚÂö³å
+0767 7F2A            264         MOV R7,#42              ;µÈ´Éè±¸ÊÍ·ÅÊ¾ÝÏß
+0769 F14C            265         CALL DelayX0us
+076B 40EA            266         JC DS18B20_Reset        ;Èç¹ûÉè±¸²»´æÔÚ,Ôò¼ÌÐøµÈ´
+076D D2A5            267         SETB DQ                     ;ÊÍ·Å×ÜÏß
+076F 00              268         NOP                     ;³ÖÐø1umÒÔÉÏ
+0770 D2AF            269             SETB    EA              ;¿ÉÒÔÔÊÐíÖÐ¶Ï
+0772 22              270         RET
+                     271     
+                     272     ;**************************************
+                     273     ;´ÓDS18B20¶Á1×Ö½ÚÊ¾Ý
+                     274     ;Èë¿Ú²ÎÊ:ÎÞ
+                     275     ;³ö¿Ú²ÎÊ:ACC
+                     276     ;**************************************
+0773                 277     DS18B20_ReadByte:
+0773 E4              278         CLR A
+0774 C000            279         PUSH 0
+0776 750008          280         MOV 0,#8                ;8Î»¼ÆÊÆ÷
+0779                 281     ReadNext:
+0779 C2A5            282         CLR DQ                  ;¿ªÊ¼Ê±¼äÆ¬
+077B 00              283         NOP
+077C 00              284         NOP
+077D D2A5            285         SETB DQ                 ;×¼±¸½ÓÊÕ
+077F 00              286         NOP
+0780 00              287         NOP
+0781 A2A5            288         MOV C,DQ                ;¶ÁÈ¡Ê¾Ý
+0783 13              289         RRC A
+0784 7F06            290         MOV R7,#6               ;µÈ´Ê±¼äÆ¬½áÊø
+0786 F14C            291         CALL DelayX0us
+                     292         ;SETB DQ
+                     293         ;NOP
+                     294         ;NOP
+0788 D500EE          295         DJNZ 0,ReadNext
+078B D000            296         POP 0
+078D 22              297         RET
+                     298     
+                     299     ;**************************************
+                     300     ;ÏòDS18B20Ð´1×Ö½ÚÊ¾Ý
+                     301     ;Èë¿Ú²ÎÊ:ACC
+                     302     ;³ö¿Ú²ÎÊ:ÎÞ
+                     303     ;**************************************
+078E                 304     DS18B20_WriteByte:
+078E C000            305         PUSH 0                  ;PUSHÖ±½Ó½«µØÖ·ÖÐµÄÄÚÈÝ´æÔÚSPÖ¸ÏòµÄµØÖ·ÖÐ
+0790 750008          306         MOV 0,#8                ;8Î»¼ÆÊÆ÷
+0793                 307     WriteNext:
+0793 C2A5            308         CLR DQ                  ;¿ªÊ¼Ê±¼äÆ¬
+0795 00              309         NOP
+0796 00              310         NOP
+0797 13              311         RRC A                   ;Êä³öÊ¾Ý,½«AµÄµÍÎ»ÒÆµ½cy
+0798 92A5            312         MOV DQ,C
+079A 7F06            313         MOV R7,#6               ;µÈ´Ê±¼äÆ¬½áÊø60us
+079C F14C            314         CALL DelayX0us
+079E D2A5            315         SETB DQ                 ;×¼±¸ËÍ³öÏÂÒ»Î»Ê¾Ý
+07A0 D500F0          316         DJNZ 0,WriteNext
+07A3 D000            317         POP 0
+07A5 22              318         RET
+                     319             
+                     320             
+07A6 C0F9A4B0        321     TAB1:  DB 0C0H,0F9H,0A4H,0B0H,99H,92H,82H,0F8H,80H,90H,0C6H,89H,0C7H     ;°Ë¶ÎÊÂë¹Ü±àÂë±í  
+A51 MACRO ASSEMBLER  TEXT                                                                 12/19/2021 14:08:27 PAGE     6
+
+                                   
+07AA 999282F8                
+07AE 8090C689                
+07B2 C7                      
+07B3 00010102        322     TAB2:  DB 0,1,1,2,3,3,4,4,5,6,6,7,8,8,9,9       ;Ð¡Êµãºó1Î»½üËÆ0.1¡æ
+07B7 03030404                
+07BB 05060607                
+07BF 08080909                
+                     323     
+07C3                 324     CAIJI:  
+07C3 D2AC            325             SETB    ES
+07C5 12072C          326             LCALL   RESET ;³õÊ¼»¯£¬¿ªÊ¼ÎÂ¶È²É¼¯
+07C8 E520            327             MOV     A,TPH ;AÖÐ´æÈëÎÂ¶ÈÖµµÄ¸ß×Ö½Ú£¬µØÖ·Îª20H   
+07CA 5407            328             ANL     A,#00000111B ;È¡µÍ3Î»£¬¸ß5Î»Îª·ûºÅÎ»
+07CC 23              329             RL      A
+07CD 23              330             RL      A
+07CE 23              331             RL      A
+07CF 23              332             RL      A
+07D0 F540            333             MOV     40H,A  ;´æÈë40H
+07D2 E521            334             MOV     A,TPL
+07D4 54F0            335             ANL     A,#11110000B ;ÎÂ¶ÈÖµµÄ¸öÎ»ÊÖµ
+07D6 C4              336             SWAP    A           
+07D7 4540            337             ORL     A,40H   ;ÎÂ¶ÈÖµ¸ßµÍ×Ö½ÚÆ´´Õ 
+07D9 75F064          338             MOV     B,#64H  ;0110 0100 Ïàµ±ÓÚDEC100D     
+07DC 84              339             DIV     AB          
+07DD F554            340             MOV     54H,A   ;µÃµ½°ÙÎ» 
+07DF E5F0            341             MOV     A,B          
+07E1 75F00A          342             MOV     B,#10   
+07E4 84              343             DIV     AB          
+07E5 F553            344             MOV     53H,A   ;µÃµ½Ê®Î»
+07E7 85F052          345             MOV     52H,B   ;µÃµ½¸öÎ»
+07EA E521            346             MOV     A,TPL
+07EC 540F            347             ANL     A,#00001111B ;ÎÂ¶ÈÖµÐ¡Ê²¿·Ö
+07EE 9007B3          348             MOV     DPTR,#TAB2   ;Ö±½Ó²é±íµÃµ½ÊÖµ
+07F1 93              349             MOVC    A,@A+DPTR
+07F2 F551            350             MOV     51H,A
+07F4 22              351             RET
+                     352     ;54HµÃµ½°ÙÎ»ÎÂ¶È£¬53HµÃµ½Ê®Î»ÎÂ¶È£¬52HµÃµ½¸öÎ»ÎÂ¶È£¬51HµÃµ½Ð¡Ê²¿·ÖÎÂ¶È
+07F5                 353     EN_VHL:
+07F5 D2AC            354             SETB    ES
+07F7 E520            355             MOV     A,TPH ;AÖÐ´æÈëÎÂ¶ÈÖµµÄ¸ß×Ö½Ú£¬µØÖ·Îª20H   
+07F9 5407            356             ANL     A,#00000111B ;È¡µÍ3Î»£¬¸ß5Î»Îª·ûºÅÎ»
+07FB 23              357             RL      A
+07FC 23              358             RL      A
+07FD 23              359             RL      A
+07FE 23              360             RL      A
+07FF F540            361             MOV     40H,A  ;´æÈë40H
+0801 E521            362             MOV     A,TPL
+0803 54F0            363             ANL     A,#11110000B 
+0805 C4              364             SWAP    A           
+0806 4540            365             ORL     A,40H       
+0808 75F064          366             MOV     B,#64H  ;0110 0100 Ïàµ±ÓÚDEC100D     
+080B 84              367             DIV     AB          
+080C F554            368             MOV     54H,A       
+080E E5F0            369             MOV     A,B          
+0810 75F00A          370             MOV     B,#10
+0813 84              371             DIV     AB          
+0814 F553            372             MOV     53H,A;
+0816 85F052          373             MOV     52H,B;
+0819 E521            374             MOV     A,TPL
+081B 540F            375             ANL     A,#00001111B 
+081D 9007B3          376             MOV     DPTR,#TAB2   
+0820 93              377             MOVC    A,@A+DPTR
+0821 F551            378             MOV     51H,A
+0823 22              379             RET
+                     380     
+A51 MACRO ASSEMBLER  TEXT                                                                 12/19/2021 14:08:27 PAGE     7
+
+0824                 381     DISPLAY:    ;53,52,51--Ê®-¸ö-Ð¡Ê
+0824 75500A          382             MOV     50H,#0AH
+0827 7850            383             MOV     R0,#50H     
+0829 7FFE            384             MOV     R7,#0FEH    
+082B 9007A6          385             MOV     DPTR,#TAB1  
+082E                 386     LOOPD:  
+082E E6              387             MOV     A,@R0       
+082F 93              388             MOVC    A,@A+DPTR   
+0830 F590            389             MOV     P1,A 
+                     390     
+0832 8FA0            391             MOV     P2,R7     
+0834 1208EC          392             LCALL   DELAY 
+                     393          
+0837 08              394             INC     R0        
+0838 EF              395             MOV     A,R7        
+0839 23              396             RL      A           
+083A FF              397             MOV     R7,A        
+083B 20E4F0          398             JB      ACC.4,LOOPD 
+083E 75A0FB          399             MOV     P2,#11111011B 
+0841 75907F          400             MOV     P1,#01111111B 
+0844 1208EC          401             LCALL   DELAY
+0847 75A0BF          402             MOV     P2,#10111111B  
+084A 22              403             RET
+                     404     
+084B                 405     DISP_COVERH:    ;53,52,51
+084B 75A0FF          406             MOV     P2,#0FFH
+084E 75500B          407             MOV     50H,#0BH
+0851 7850            408             MOV     R0,#50H     
+0853 7FFE            409             MOV     R7,#0FEH    
+0855 9007A6          410             MOV     DPTR,#TAB1  
+0858                 411     LOOPCH:  
+0858 E6              412             MOV     A,@R0       
+0859 93              413             MOVC    A,@A+DPTR   
+085A F590            414             MOV     P1,A        
+085C 8FA0            415             MOV     P2,R7  ;Î»Ñ¡ÏÔÊ¾ÉãÊÏ¶ÈC     
+085E 1208EC          416             LCALL   DELAY     
+0861 08              417             INC     R0          
+0862 EF              418             MOV     A,R7        
+0863 23              419             RL      A           
+0864 FF              420             MOV     R7,A        
+0865 20E4F0          421             JB      ACC.4,LOOPCH 
+0868 75A0FB          422             MOV     P2,#11111011B 
+086B 75907F          423             MOV     P1,#01111111B 
+086E 1208EC          424             LCALL   DELAY
+0871 75A0BF          425             MOV     P2,#10111111B  
+0874 22              426             RET
+                     427     
+0875                 428     DISP_COVERL:    ;53,52,51
+0875 75A0FF          429             MOV     P2,#0FFH
+0878 75500C          430             MOV     50H,#0CH
+087B 7850            431             MOV     R0,#50H     
+087D 7FFE            432             MOV     R7,#0FEH    
+087F 9007A6          433             MOV     DPTR,#TAB1  
+0882                 434     LOOPCL:  
+0882 E6              435             MOV     A,@R0       
+0883 93              436             MOVC    A,@A+DPTR   
+0884 F590            437             MOV     P1,A        
+0886 8FA0            438             MOV     P2,R7  ;Î»Ñ¡ÏÔÊ¾ÉãÊÏ¶ÈC     
+0888 1208EC          439             LCALL   DELAY     
+088B 08              440             INC     R0          
+088C EF              441             MOV     A,R7        
+088D 23              442             RL      A           
+088E FF              443             MOV     R7,A        
+088F 20E4F0          444             JB      ACC.4,LOOPCL 
+0892 75A0FB          445             MOV     P2,#11111011B 
+0895 75907F          446             MOV     P1,#01111111B 
+A51 MACRO ASSEMBLER  TEXT                                                                 12/19/2021 14:08:27 PAGE     8
+
+0898 1208EC          447             LCALL   DELAY
+089B 75A0BF          448             MOV     P2,#10111111B  
+089E 22              449             RET
+                     450     
+                     451     
+089F                 452     BUZZER:  ;±¨¾¯³ÌÐò
+089F E520            453             MOV A,TPH         
+08A1 B56100          454             CJNE A,V_HH,STEP
+08A4                 455     STEP:
+08A4 400E            456             JC SAFE1  ;±È½Ï¸ß×Ö½Úºó£¬ÈôÎÂ¶ÈÖµ¸ß×Ö½ÚÐ¡ÓÚÉÏÏÞÖµ¸ß×Ö½Ú£¬Ö±½Ó±È½ÏÏÂÏÞÖµ
+08A6 9561            457             SUBB A,V_HH
+08A8 6003            458             JZ IF_SAFE
+08AA 0208CC          459             LJMP BZ_IN
+08AD                 460     IF_SAFE:
+08AD E521            461             MOV A,TPL
+08AF B56200          462             CJNE A,V_HL,SAFE
+08B2                 463     SAFE:
+08B2 5018            464             JNC BZ_IN
+                     465             
+                     466     
+08B4                 467     SAFE1:
+08B4 E520            468             MOV A,TPH         
+08B6 B56300          469             CJNE A,V_LH,STEP1 ;±È½ÏµÍ×Ö½Ú£¬ÈôÎÂ¶ÈÖµµÍ×Ö½ÚµÍÓÚÉÏÏÞÖµµÍ×Ö½Ú£¬±¨¾¯
+08B9                 470     STEP1:
+08B9 4011            471             JC BZ_IN
+08BB 9563            472             SUBB A,V_LH
+08BD 6003            473             JZ IF_SAFE1
+08BF 0208DE          474             LJMP BZ_OUT
+08C2                 475     IF_SAFE1:
+08C2 E521            476             MOV A,TPL
+08C4 B56400          477             CJNE A,V_LL,SAFE2
+08C7                 478     SAFE2:
+08C7 4003            479             JC BZ_IN
+08C9 0208DE          480             LJMP BZ_OUT
+                     481              
+                     482             
+08CC                 483     BZ_IN:
+08CC 758901          484             MOV TMOD,#01H
+08CF 758CFE          485         MOV TH0,#0FEH
+08D2 758A08          486             MOV  TL0,#08H
+08D5 D2A9            487             SETB ET0
+08D7 D28C            488             SETB TR0
+08D9 D2AF            489             SETB EA
+08DB 120906          490             LCALL DELS
+08DE                 491     BZ_OUT:
+                     492             ;CLR EA
+                     493             ;CLR TR0
+08DE C2A9            494             CLR ET0
+08E0 D2A4            495             SETB LED
+08E2 22              496             RET
+                     497             
+08E3                 498     T0INT:
+08E3 758CFE          499                     MOV TH0,#0FEH
+08E6 758A08          500                     MOV TL0,#08H    
+                     501                     ;CPL FMQ
+08E9 C2A4            502                     CLR LED
+08EB                 503     TOEND:
+                     504                     ;clr ea
+08EB 32              505                     RETI
+                     506                     
+08EC                 507     DELAY:  
+08EC 757E02          508             MOV     7EH,#02H
+08EF                 509     NEI:    
+08EF 757FFF          510             MOV     7FH,#0FFH
+08F2 D57FFD          511             DJNZ    7FH,$
+08F5 D57EF7          512             DJNZ    7EH,NEI
+A51 MACRO ASSEMBLER  TEXT                                                                 12/19/2021 14:08:27 PAGE     9
+
+08F8 22              513             RET
+                     514     
+08F9 7F02            515     DEL0S:MOV R7,#2   ;°´¼üÏû¶¶
+08FB 7E96            516             D1: MOV R6,#150
+08FD 7DFA            517             D2: MOV R5,#250
+08FF DDFE            518             DJNZ R5,$
+0901 DEFA            519             DJNZ R6,D2
+0903 DFF6            520             DJNZ R7,D1
+0905 22              521     RET
+                     522     
+0906 7F02            523     DELS:MOV R7,#2   
+0908 7E64            524             D1S: MOV R6,#100
+090A 7DC8            525             D2S: MOV R5,#200
+090C DDFE            526             DJNZ R5,$
+090E DEFA            527             DJNZ R6,D2S
+0910 DFF6            528             DJNZ R7,D1S
+0912 22              529     RET
+                     530     
+0913                 531     TABLE1:
+0913 F889            532                     DW 63625,63833,64019,64104,64260,64440,64524                    ;ÒôÂÉ±í
+0915 F959                    
+0917 FA13                    
+0919 FA68                    
+091B FB04                    
+091D FBB8                    
+091F FC0C                    
+0921 FC44            533                     DW 64580,64685,64778,64820,64898,64968,65030
+0923 FCAD                    
+0925 FD0A                    
+0927 FD34                    
+0929 FD82                    
+092B FDC8                    
+092D FE06                    
+092F FE22            534                     DW 65058
+                     535                     ;       1         2              3    4      5     6     7   µÍÒô
+                     536                     ;   8     9          A    B      C         D     E  ÖÐÒô
+                     537                     ;   F                                                                      
+                                   ¸ßÒô
+0931 8484A882        538     TABLE:  DB  84H,84H,0A8H,82H,84H,0A8H,0D4H,0D4H,0D2H,0C2H,0D4H,0C2H,84H,0A8H
+0935 84A8D4D4                
+0939 D2C2D4C2                
+093D 84A8                    
+093F F2D2D2C2        539                 DB  0F2H,0D2H,0D2H,0C2H,0D8H,0C2H,84H,98H,0E8H,0E2H,0C2H,0A4H,0C8H
+0943 D8C28498                
+0947 E8E2C2A4                
+094B C8                      
+094C 00              540                     DB   00H
+094D A4849464        541     HULU:   DB      0A4H,84H,94H,64H,0A2H,92H,83H,92H,64H   ;¸ßÎ»ÎªÒôÂÉ£¬µÍÎ»Îª½ÚÅÄÊ±¼ä
+0951 A2928392                
+0955 64                      
+0956 A4849494        542                     DB      0A4H,84H,94H,94H,0C2H,0A2H,72H,84H      
+095A C2A27284                
+095E 00              543                     DB  00H 
+                     544         END
+A51 MACRO ASSEMBLER  TEXT                                                                 12/19/2021 14:08:27 PAGE    10
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ACC. . . . . . . .  D ADDR   00E0H   A   
+B. . . . . . . . .  D ADDR   00F0H   A   
+BUZZER . . . . . .  C ADDR   089FH   A   
+BZ_IN. . . . . . .  C ADDR   08CCH   A   
+BZ_OUT . . . . . .  C ADDR   08DEH   A   
+CAIJI. . . . . . .  C ADDR   07C3H   A   
+CLR_MENU . . . . .  C ADDR   06DCH   A   
+D1 . . . . . . . .  C ADDR   08FBH   A   
+D11. . . . . . . .  C ADDR   0645H   A   
+D1S. . . . . . . .  C ADDR   0908H   A   
+D2 . . . . . . . .  C ADDR   08FDH   A   
+D22. . . . . . . .  C ADDR   0666H   A   
+D2S. . . . . . . .  C ADDR   090AH   A   
+D33. . . . . . . .  C ADDR   0668H   A   
+DEL0S. . . . . . .  C ADDR   08F9H   A   
+DELAY. . . . . . .  C ADDR   08ECH   A   
+DELAY11. . . . . .  C ADDR   0664H   A   
+DELAYX0US. . . . .  C ADDR   074CH   A   
+DELS . . . . . . .  C ADDR   0906H   A   
+DISPLAY. . . . . .  C ADDR   0824H   A   
+DISP_COVERH. . . .  C ADDR   084BH   A   
+DISP_COVERL. . . .  C ADDR   0875H   A   
+DOWN_KEYH. . . . .  C ADDR   06F3H   A   
+DOWN_KEYL. . . . .  C ADDR   0719H   A   
+DOWN_KH4 . . . . .  C ADDR   06F6H   A   
+DOWN_KL4 . . . . .  C ADDR   071CH   A   
+DQ . . . . . . . .  B ADDR   00A0H.5 A   
+DS18B20_READBYTE .  C ADDR   0773H   A   
+DS18B20_RESET. . .  C ADDR   0757H   A   
+DS18B20_WRITEBYTE.  C ADDR   078EH   A   
+EA . . . . . . . .  B ADDR   00A8H.7 A   
+END0 . . . . . . .  C ADDR   064CH   A   
+EN_VHL . . . . . .  C ADDR   07F5H   A   
+ES . . . . . . . .  B ADDR   00A8H.4 A   
+ET0. . . . . . . .  B ADDR   00A8H.1 A   
+EXH3 . . . . . . .  C ADDR   06F2H   A   
+EXH4 . . . . . . .  C ADDR   0705H   A   
+EXL3 . . . . . . .  C ADDR   0718H   A   
+EXL4 . . . . . . .  C ADDR   072BH   A   
+FMQ. . . . . . . .  B ADDR   00A0H.7 A   
+HULU . . . . . . .  C ADDR   094DH   A   
+IE . . . . . . . .  D ADDR   00A8H   A   
+IF_SAFE. . . . . .  C ADDR   08ADH   A   
+IF_SAFE1 . . . . .  C ADDR   08C2H   A   
+K2 . . . . . . . .  B ADDR   00B0H.2 A   
+K3 . . . . . . . .  B ADDR   00B0H.3 A   
+K4 . . . . . . . .  B ADDR   00B0H.4 A   
+LED. . . . . . . .  B ADDR   00A0H.4 A   
+LOOP111. . . . . .  C ADDR   0676H   A   
+LOOPCH . . . . . .  C ADDR   0858H   A   
+LOOPCL . . . . . .  C ADDR   0882H   A   
+LOOPD. . . . . . .  C ADDR   082EH   A   
+MAIN . . . . . . .  C ADDR   0600H   A   
+MENU . . . . . . .  D ADDR   0060H   A   
+MENU0. . . . . . .  C ADDR   06ACH   A   
+MENU1. . . . . . .  C ADDR   06B6H   A   
+MENU2. . . . . . .  C ADDR   06C9H   A   
+NEI. . . . . . . .  C ADDR   08EFH   A   
+NEXT . . . . . . .  C ADDR   0682H   A   
+NEXT0. . . . . . .  C ADDR   0692H   A   
+A51 MACRO ASSEMBLER  TEXT                                                                 12/19/2021 14:08:27 PAGE    11
+
+NEXT1. . . . . . .  C ADDR   0698H   A   
+NEXT11 . . . . . .  C ADDR   0618H   A   
+NEXT5. . . . . . .  C ADDR   06ABH   A   
+NO_NEXT. . . . . .  C ADDR   068AH   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+P3 . . . . . . . .  D ADDR   00B0H   A   
+PSW. . . . . . . .  D ADDR   00D0H   A   
+READNEXT . . . . .  C ADDR   0779H   A   
+RESET. . . . . . .  C ADDR   072CH   A   
+RESTART. . . . . .  C ADDR   069EH   A   
+SAFE . . . . . . .  C ADDR   08B2H   A   
+SAFE1. . . . . . .  C ADDR   08B4H   A   
+SAFE2. . . . . . .  C ADDR   08C7H   A   
+SETTLE . . . . . .  C ADDR   06A0H   A   
+SING . . . . . . .  C ADDR   062EH   A   
+SP . . . . . . . .  D ADDR   0081H   A   
+START. . . . . . .  C ADDR   067CH   A   
+START1 . . . . . .  C ADDR   060FH   A   
+STEP . . . . . . .  C ADDR   08A4H   A   
+STEP1. . . . . . .  C ADDR   08B9H   A   
+T0INT. . . . . . .  C ADDR   08E3H   A   
+TAB1 . . . . . . .  C ADDR   07A6H   A   
+TAB2 . . . . . . .  C ADDR   07B3H   A   
+TABLE. . . . . . .  C ADDR   0931H   A   
+TABLE1 . . . . . .  C ADDR   0913H   A   
+TH0. . . . . . . .  D ADDR   008CH   A   
+TH1. . . . . . . .  D ADDR   008DH   A   
+TIM1 . . . . . . .  C ADDR   0651H   A   
+TL0. . . . . . . .  D ADDR   008AH   A   
+TL1. . . . . . . .  D ADDR   008BH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TOEND. . . . . . .  C ADDR   08EBH   A   
+TPH. . . . . . . .  D ADDR   0020H   A   
+TPL. . . . . . . .  D ADDR   0021H   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+TR1. . . . . . . .  B ADDR   0088H.6 A   
+UP_KEYH. . . . . .  C ADDR   06E0H   A   
+UP_KEYL. . . . . .  C ADDR   0706H   A   
+UP_KH3 . . . . . .  C ADDR   06E3H   A   
+UP_KL3 . . . . . .  C ADDR   0709H   A   
+V_HH . . . . . . .  D ADDR   0061H   A   
+V_HL . . . . . . .  D ADDR   0062H   A   
+V_LH . . . . . . .  D ADDR   0063H   A   
+V_LL . . . . . . .  D ADDR   0064H   A   
+WRITENEXT. . . . .  C ADDR   0793H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

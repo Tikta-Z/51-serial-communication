@@ -1,0 +1,3 @@
+".\Objects\tst.obj" 
+TO ".\Objects\tet" 
+PRINT(".\Listings\tet.m51") RAMSIZE(256) 

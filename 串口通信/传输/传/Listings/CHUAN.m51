@@ -1,0 +1,89 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        12/14/2021  21:35:36  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+D:\LC UNIVERSITY\SOFTWARE\KEIL\C51\BIN\BL51.EXE .\Objects\chuan.obj TO .\Objects\CHUAN PRINT (.\Listings\CHUAN.m51) RAMS
+>> IZE (256)
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\chuan.obj (CHUAN)
+
+
+LINK MAP OF MODULE:  .\Objects\CHUAN (CHUAN)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0068H     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\CHUAN (CHUAN)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        CHUAN
+  B:00A8H.7       SYMBOL        EA
+  B:00A8H.4       SYMBOL        ES
+  B:00A8H.0       SYMBOL        EX0
+  B:00A8H.2       SYMBOL        EX1
+  B:0088H.0       SYMBOL        IT0
+  B:0088H.2       SYMBOL        IT1
+  C:0054H         SYMBOL        K2
+  C:004BH         SYMBOL        K3
+  D:0087H         SYMBOL        PCON
+  C:0067H         SYMBOL        RETEN
+  D:0099H         SYMBOL        SBUF
+  D:0098H         SYMBOL        SCON
+  C:005DH         SYMBOL        SEND
+  C:0030H         SYMBOL        START
+  D:008DH         SYMBOL        TH1
+  B:0098H.1       SYMBOL        TI
+  D:008BH         SYMBOL        TL1
+  D:0089H         SYMBOL        TMOD
+  B:0088H.6       SYMBOL        TR1
+  C:0000H         LINE#         2
+  C:0003H         LINE#         4
+  C:0013H         LINE#         6
+  C:0023H         LINE#         8
+  C:0030H         LINE#         10
+  C:0033H         LINE#         11
+  C:0035H         LINE#         12
+  C:0037H         LINE#         13
+  C:003AH         LINE#         14
+  C:003DH         LINE#         15
+BL51 BANKED LINKER/LOCATER V6.22                                                      12/14/2021  21:35:36  PAGE 2
+
+
+  C:0040H         LINE#         16
+  C:0043H         LINE#         17
+  C:0045H         LINE#         18
+  C:0047H         LINE#         19
+  C:0049H         LINE#         20
+  C:004BH         LINE#         22
+  C:004DH         LINE#         23
+  C:004FH         LINE#         24
+  C:0051H         LINE#         25
+  C:0053H         LINE#         26
+  C:0054H         LINE#         28
+  C:0056H         LINE#         29
+  C:0058H         LINE#         30
+  C:005AH         LINE#         31
+  C:005CH         LINE#         32
+  C:005DH         LINE#         34
+  C:005FH         LINE#         35
+  C:0061H         LINE#         36
+  C:0063H         LINE#         37
+  C:0065H         LINE#         38
+  C:0067H         LINE#         39
+  -------         ENDMOD        CHUAN
+
+Program Size: data=8.0 xdata=0 code=104
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,3 @@
+".\Objects\jie.obj" 
+TO ".\Objects\HULU" 
+PRINT(".\Listings\HULU.m51") RAMSIZE(256) 

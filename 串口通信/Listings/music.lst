@@ -1,0 +1,135 @@
+A51 MACRO ASSEMBLER  MUSIC                                                                12/02/2021 16:17:53 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02c
+OBJECT MODULE PLACED IN .\Objects\music.obj
+ASSEMBLER INVOKED BY: D:\Lc University\software\keil\C51\BIN\A51.EXE ..\music.asm SET(SMALL) DEBUG PRINT(.\Listings\musi
+                      c.lst) OBJECT(.\Objects\music.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1     ORG 0000H
+0000 8058              2     JMP START
+000B                   3     ORG 000BH
+000B 019B              4     JMP TIM0
+000D                   5     TABLE1:
+000D FA15              6                     DW 64021,64103,64260,64400                              ;ÒôÂÉ±í
+000F FA67                    
+0011 FB04                    
+0013 FB90                    
+0015 FC0C              7                     DW 64524,64580,64684,64777
+0017 FC44                    
+0019 FCAC                    
+001B FD09                    
+001D FD34              8                     DW 64820,64898,64968,65030
+001F FD82                    
+0021 FDC8                    
+0023 FE06                    
+0025 FDA6              9                     DW 64934                                                                
+0027 42828282         10     TABLE:  DB 42h,82h,82h,82h,84h,02h,72h                  ;¸ßÎ»ÎªÒôÂÉ£¬µÍÎ»Îª½ÚÅÄÊ±¼ä
+002B 840272                  
+002E 62726252         11                     DB 62h,72h,62h,52h,48h
+0032 48                      
+0033 B2B2B2B2         12                     DB 0b2h,0b2h,0b2h,0b2h,0b4h,02h,0a2h
+0037 B402A2                  
+003A 12A2D292         13                     DB 12h,0a2h,0d2h,92h,88h
+003E 88                      
+003F 82B2B2A2         14                     DB 82h,0b2h,0b2h,0a2h,84h,02h,72h
+0043 840272                  
+0046 62726252         15                     DB 62h,72h,62h,52h,44h,02h,12h
+004A 440212                  
+004D 12626252         16                     DB 12h,62h,62h,52h,44h,02h,82h
+0051 440282                  
+0054 72625232         17                     DB 72h,62h,52h,32h,48h
+0058 48                      
+0059 00               18                     DB 00h                                                                  
+005A                  19     START:
+005A 758901           20                     MOV TMOD,#01H           ;T0¹¤×÷·½Ê½1
+005D 75A882           21                     MOV IE,#82H                     
+0060 753000           22     START0: MOV 30H,#00
+0063 E530             23     NEXT:   MOV A,30H
+0065 900027           24                     MOV DPTR,#TABLE
+0068 93               25                     MOVC A,@A+DPTR
+0069 FA               26                     MOV R2,A
+006A 602B             27                     JZ END0
+006C 540F             28                     ANL A,#0FH
+006E FD               29                     MOV R5,A
+006F EA               30                     MOV A,R2
+0070 C4               31                     SWAP A
+0071 540F             32                     ANL A,#0FH
+0073 7004             33                     JNZ SING
+0075 C28C             34                     CLR TR0
+0077 8017             35                     JMP D1
+0079 14               36     SING:   DEC A
+007A F522             37                     MOV 22H,A
+007C 23               38                     RL A
+007D 90000D           39                     MOV DPTR,#TABLE1
+0080 93               40                     MOVC A,@A+DPTR
+A51 MACRO ASSEMBLER  MUSIC                                                                12/02/2021 16:17:53 PAGE     2
+
+0081 F58C             41                     MOV TH0,A
+0083 F521             42                     MOV 21H,A
+0085 E522             43                     MOV A,22H
+0087 23               44                     RL A
+0088 04               45                     INC A
+0089 93               46                     MOVC A,@A+DPTR
+008A F58A             47                     MOV TL0,A
+008C F520             48                     MOV 20H,A
+008E D28C             49                     SETB TR0
+0090 1200AC           50     D1:             LCALL DELAY             ;Êä³öÒ»¸öÒô·û
+0093 0530             51                     INC 30H
+0095 80CC             52                     JMP NEXT
+0097 C28C             53     END0:   CLR TR0                 ;Í£Ö¹²¥·Å
+0099 80C5             54                     JMP START0
+009B C0E0             55     TIM0:   PUSH ACC
+009D C0D0             56                     PUSH PSW
+009F 85208A           57                     MOV TL0,20H             ;ÖØÐÂ×°Èë³õÖµ
+00A2 85218C           58                     MOV TH0,21H
+00A5 B2A7             59                     CPL P2.7        ;Êä³öÒôÆµÊ¾Ý
+00A7 D0D0             60                     POP PSW
+00A9 D0E0             61                     POP ACC
+00AB 32               62                     RETI
+00AC 7F02             63       DELAY:MOV R7,#02
+00AE 7C7D             64         D2: MOV R4,#125
+00B0 7BF8             65         D3: MOV R3,#248
+00B2 DBFE             66                     DJNZ R3,$
+00B4 DCFA             67                     DJNZ R4,d3
+00B6 DFF6             68                     DJNZ R7,d2
+00B8 DDF2             69                     DJNZ R5,delay
+00BA 22               70                     RET
+                      71     
+                      72     END
+A51 MACRO ASSEMBLER  MUSIC                                                                12/02/2021 16:17:53 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ACC. . . . . . . .  D ADDR   00E0H   A   
+D1 . . . . . . . .  C ADDR   0090H   A   
+D2 . . . . . . . .  C ADDR   00AEH   A   
+D3 . . . . . . . .  C ADDR   00B0H   A   
+DELAY. . . . . . .  C ADDR   00ACH   A   
+END0 . . . . . . .  C ADDR   0097H   A   
+IE . . . . . . . .  D ADDR   00A8H   A   
+NEXT . . . . . . .  C ADDR   0063H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+PSW. . . . . . . .  D ADDR   00D0H   A   
+SING . . . . . . .  C ADDR   0079H   A   
+START. . . . . . .  C ADDR   005AH   A   
+START0 . . . . . .  C ADDR   0060H   A   
+TABLE. . . . . . .  C ADDR   0027H   A   
+TABLE1 . . . . . .  C ADDR   000DH   A   
+TH0. . . . . . . .  D ADDR   008CH   A   
+TIM0 . . . . . . .  C ADDR   009BH   A   
+TL0. . . . . . . .  D ADDR   008AH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

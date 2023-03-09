@@ -1,0 +1,209 @@
+A51 MACRO ASSEMBLER  JIE                                                                  12/19/2021 15:57:45 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02c
+OBJECT MODULE PLACED IN .\Objects\jie.obj
+ASSEMBLER INVOKED BY: D:\Lc University\software\keil\C51\BIN\A51.EXE ..\jie.asm SET(SMALL) DEBUG PRINT(.\Listings\jie.ls
+                      t) OBJECT(.\Objects\jie.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+  00A4                 1     LED      BIT    P2.4
+0000                   2     ORG 0000H
+0000 020030            3                     LJMP MAIN
+000B                   4     ORG 000BH
+000B 02009C            5                     LJMP TIM0
+0023                   6     ORG 0023H
+0023 020058            7                     LJMP RECEIVE
+                       8     
+0030                   9     ORG 0030H
+0030 759850           10     MAIN:   MOV SCON,#50H   ;ÉèÖÃ´®ÐÐ¿Ú¹¤×÷·½Ê½1,ÔÊÐí½ÓÊÕ
+0033 758700           11                     MOV PCON,#00H   ;SMODÎª0£¬²¨ÌØÂÊ²»¼Ó±¶
+0036 758921           12                     MOV TMOD,#21H   ;¶¨Ê±Æ÷1¹¤×÷·½Ê½2,T0¹¤×÷·½Ê½1
+0039 758DFD           13                     MOV TH1,#0FDH   ;Òç³öÂÊ³õÖµ
+003C 758BFD           14                     MOV TL1,#0FDH   
+003F 75A892           15                     MOV IE,#92H             ;¿ªÆôÖÐ¶ÏÊ¹ÄÜ
+0042 C2B9             16                     CLR PT0                 ;¶¨Ê±Æ÷0µÍÓÅÏÈ¼¶
+0044 D2BC             17                     SETB PS                 ;´®¿ÚÖÐ¶Ï¸ßÓÅÏÈ¼¶
+0046 D28E             18                     SETB TR1                ;´ò¿ª¶¨Ê±Æ÷
+0048 D2D5             19                     SETB F0
+004A 30D502           20     HERE:   JNB F0,MUSIC
+004D 80FB             21                     JMP HERE
+                      22     
+004F D2D5             23     MUSIC:  SETB F0
+0051 B2A4             24                     CPL LED
+0053 120060           25                     LCALL START0
+0056 80F2             26                     JMP HERE
+                      27     
+0058 C298             28     RECEIVE:CLR RI
+005A E599             29                     MOV A,SBUF
+005C F8               30                     MOV R0,A
+005D C2D5             31                     CLR F0  
+005F 32               32     RETEN:  RETI
+                      33                     
+                      34     
+0060                  35     START0: 
+0060 753000           36                     MOV 30H,#00                             ;ÒôÀÖ²¥·Å×Ó³ÌÐò
+0063 E530             37     NEXT:   MOV A,30H
+0065 758300           38                     MOV DPH,#00H
+0068 8882             39                     MOV DPL,R0
+006A 93               40                     MOVC A,@A+DPTR
+006B FA               41                     MOV R2,A
+006C 602B             42                     JZ END0
+006E 540F             43                     ANL A,#0FH
+0070 FD               44                     MOV R5,A
+0071 EA               45                     MOV A,R2
+0072 C4               46                     SWAP A
+0073 540F             47                     ANL A,#0FH
+0075 7004             48                     JNZ SING
+0077 C28C             49                     CLR TR0
+0079 8017             50                     JMP D1
+007B 14               51     SING:   DEC A
+007C F522             52                     MOV 22H,A
+007E 23               53                     RL A
+007F 9000C9           54                     MOV DPTR,#TABLE1
+0082 93               55                     MOVC A,@A+DPTR
+0083 F58C             56                     MOV TH0,A
+0085 F521             57                     MOV 21H,A
+A51 MACRO ASSEMBLER  JIE                                                                  12/19/2021 15:57:45 PAGE     2
+
+0087 E522             58                     MOV A,22H
+0089 23               59                     RL A
+008A 04               60                     INC A
+008B 93               61                     MOVC A,@A+DPTR
+008C F58A             62                     MOV TL0,A
+008E F520             63                     MOV 20H,A
+0090 D28C             64                     SETB TR0
+0092 1200AD           65     D1:             LCALL DELAY             ;Êä³öÒ»¸öÒô·û
+0095 0530             66                     INC 30H
+0097 80CA             67                     JMP NEXT
+0099 C28C             68     END0:   CLR TR0                 ;Í£Ö¹²¥·Å
+009B 22               69                     RET
+                      70                     
+009C C0E0             71     TIM0:   PUSH ACC
+009E C0D0             72                     PUSH PSW
+00A0 85208A           73                     MOV TL0,20H             ;ÖØÐÂ×°Èë³õÖµ
+00A3 85218C           74                     MOV TH0,21H
+00A6 B2A7             75                     CPL P2.7        ;Êä³öÒôÆµÊ¾Ý
+00A8 D0D0             76                     POP PSW
+00AA D0E0             77                     POP ACC
+00AC 32               78                     RETI
+                      79                     
+00AD 7F02             80     DELAY:  MOV R7,#02              ;ÑÓÊ±0.1s¡ÁR5
+00AF 7C64             81     D2:             MOV R4,#100
+00B1 7BE6             82     D3:             MOV R3,#230
+00B3 DBFE             83                     DJNZ R3,$
+00B5 DCFA             84                     DJNZ R4,D3
+00B7 DFF6             85                     DJNZ R7,D2
+00B9 DDF2             86                     DJNZ R5,DELAY
+00BB 22               87                     RET
+                      88     
+00BC 7F32             89     DELAY1: MOV R7,#50              ;ÑÓÊ±3S
+00BE 7C64             90     D21:    MOV R4,#100
+00C0 7BFA             91     D31:    MOV R3,#250
+00C2 DBFE             92                     DJNZ R3,$
+00C4 DCFA             93                     DJNZ R4,D31
+00C6 DFF6             94                     DJNZ R7,D21
+00C8 22               95                     RET
+                      96     
+00C9                  97     TABLE1:
+00C9 F889             98                     DW 63625,63833,64019,64104,64260,64440,64524                    ;ÒôÂÉ±í
+00CB F959                    
+00CD FA13                    
+00CF FA68                    
+00D1 FB04                    
+00D3 FBB8                    
+00D5 FC0C                    
+00D7 FC44             99                     DW 64580,64685,64778,64820,64898,64968,65030
+00D9 FCAD                    
+00DB FD0A                    
+00DD FD34                    
+00DF FD82                    
+00E1 FDC8                    
+00E3 FE06                    
+00E5 FE22            100                     DW 65058
+                     101                     ;       1         2              3    4      5     6     7   µÍÒô
+                     102                     ;   8     9          A    B      C         D     E  ÖÐÒô
+                     103                     ;   F                                                                      
+                                   ¸ß
+                     104                     
+00E7 A4849464        105     TABLE:   DB     0A4H,84H,94H,64H,0A2H,92H,83H,92H,64H   ;¸ßÎ»ÎªÒôÂÉ£¬µÍÎ»Îª½ÚÅÄÊ±¼ä
+00EB A2928392                
+00EF 64                      
+00F0 A4849494        106                      DB     0A4H,84H,94H,94H,0C2H,0A2H,72H,84H              ;00E7
+00F4 C2A27284                
+00F8 00              107                      DB 00H 
+A51 MACRO ASSEMBLER  JIE                                                                  12/19/2021 15:57:45 PAGE     3
+
+                     108     
+00F9 62728484        109     QIJI:   DB      62H,72H,84H,84H,84H,0A2H,0A2H,0A2H
+00FD 84A2A2A2                
+0101 965252A4        110                     DB  96H,52H,52H,0A4H,0A4H,0A4H,92H,92H,92H
+0105 A4A49292                
+0109 92                      
+010A 86847262        111                     DB  86H,84H,72H,62H,62H,86H,84H,72H,52H,52H
+010E 62868472                
+0112 5252                    
+0114 86828294        112                     DB      86H,82H,82H,94H,64H,72H,82H,82H,72H,76H
+0118 64728282                
+011C 7276                    
+011E 00              113                     DB  00H
+                     114     
+                     115     
+                     116     
+                     117     END
+A51 MACRO ASSEMBLER  JIE                                                                  12/19/2021 15:57:45 PAGE     4
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ACC. . . . . . . .  D ADDR   00E0H   A   
+D1 . . . . . . . .  C ADDR   0092H   A   
+D2 . . . . . . . .  C ADDR   00AFH   A   
+D21. . . . . . . .  C ADDR   00BEH   A   
+D3 . . . . . . . .  C ADDR   00B1H   A   
+D31. . . . . . . .  C ADDR   00C0H   A   
+DELAY. . . . . . .  C ADDR   00ADH   A   
+DELAY1 . . . . . .  C ADDR   00BCH   A   
+DPH. . . . . . . .  D ADDR   0083H   A   
+DPL. . . . . . . .  D ADDR   0082H   A   
+END0 . . . . . . .  C ADDR   0099H   A   
+F0 . . . . . . . .  B ADDR   00D0H.5 A   
+HERE . . . . . . .  C ADDR   004AH   A   
+IE . . . . . . . .  D ADDR   00A8H   A   
+LED. . . . . . . .  B ADDR   00A0H.4 A   
+MAIN . . . . . . .  C ADDR   0030H   A   
+MUSIC. . . . . . .  C ADDR   004FH   A   
+NEXT . . . . . . .  C ADDR   0063H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+PCON . . . . . . .  D ADDR   0087H   A   
+PS . . . . . . . .  B ADDR   00B8H.4 A   
+PSW. . . . . . . .  D ADDR   00D0H   A   
+PT0. . . . . . . .  B ADDR   00B8H.1 A   
+QIJI . . . . . . .  C ADDR   00F9H   A   
+RECEIVE. . . . . .  C ADDR   0058H   A   
+RETEN. . . . . . .  C ADDR   005FH   A   
+RI . . . . . . . .  B ADDR   0098H.0 A   
+SBUF . . . . . . .  D ADDR   0099H   A   
+SCON . . . . . . .  D ADDR   0098H   A   
+SING . . . . . . .  C ADDR   007BH   A   
+START0 . . . . . .  C ADDR   0060H   A   
+TABLE. . . . . . .  C ADDR   00E7H   A   
+TABLE1 . . . . . .  C ADDR   00C9H   A   
+TH0. . . . . . . .  D ADDR   008CH   A   
+TH1. . . . . . . .  D ADDR   008DH   A   
+TIM0 . . . . . . .  C ADDR   009CH   A   
+TL0. . . . . . . .  D ADDR   008AH   A   
+TL1. . . . . . . .  D ADDR   008BH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+TR1. . . . . . . .  B ADDR   0088H.6 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)
